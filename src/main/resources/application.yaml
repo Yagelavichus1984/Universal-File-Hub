@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5440/metadb
+    username: metauser
+    password: metapass
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+  liquibase:
+    change-log: classpath:db/db.changelog-master.yaml

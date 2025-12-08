@@ -1,0 +1,59 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-file_metadata
+      author: system
+      changes:
+        - createTable:
+            tableName: file_metadata
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: file_name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content_type
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: size
+                  type: Long
+                  constraints:
+                    nullable: false
+              - column:
+                  name: owner_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: Status
+                  constraints:
+                    nullable: false
+              - column:
+                  name: storage_key
+                  type: varchar
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: created_at
+                  type: OffsetDateTime
+              - column:
+                  name: updated_at
+                  type: OffsetDateTime
+        - createIndex:
+            tableName: file_metadata
+            indexName: idx_file_metadata_file_name
+            unique: true
+            columns:
+              - column:
+                  name: file_name
