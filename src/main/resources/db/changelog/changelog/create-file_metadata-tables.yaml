@@ -1,7 +1,23 @@
 databaseChangeLog:
   - changeSet:
-      id: create-file_metadata
-      author: system
+      id: enable-pgcrypto-extension
+      author: yaser
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - extensionExists:
+                extensionName: pgcrypto
+      changes:
+        - sql:
+            sql: CREATE EXTENSION IF NOT EXISTS pgcrypto
+  - changeSet:
+      id: create-file_metadata-table
+      author: yaser
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: file_metadata
       changes:
         - createTable:
             tableName: file_metadata
@@ -9,23 +25,22 @@ databaseChangeLog:
               - column:
                   name: id
                   type: UUID
-                  autoIncrement: true
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
                   name: file_name
-                  type: varchar(50)
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
               - column:
                   name: content_type
-                  type: varchar(255)
+                  type: VARCHAR(100)
                   constraints:
                     nullable: false
               - column:
                   name: size
-                  type: Long
+                  type: BIGINT
                   constraints:
                     nullable: false
               - column:
@@ -35,25 +50,62 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: status
-                  type: Status
+                  type: VARCHAR(20)
                   constraints:
                     nullable: false
               - column:
                   name: storage_key
-                  type: varchar
+                  type: VARCHAR(500)
                   constraints:
                     nullable: false
-                    unique: true
               - column:
                   name: created_at
-                  type: OffsetDateTime
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
               - column:
                   name: updated_at
-                  type: OffsetDateTime
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: file_metadata
+            baseColumnNames: owner_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_file_metadata_owner
+            validate: true
+
+        - addUniqueConstraint:
+            constraintName: uk_file_metadata_storage_key
+            tableName: file_metadata
+            columnNames: storage_key
+            validate: true
+
         - createIndex:
             tableName: file_metadata
-            indexName: idx_file_metadata_file_name
-            unique: true
+            indexName: idx_file_metadata_owner_id
             columns:
               - column:
-                  name: file_name
+                  name: owner_id
+
+        - createIndex:
+            tableName: file_metadata
+            indexName: idx_file_metadata_status
+            columns:
+              - column:
+                  name: status
+
+        - createIndex:
+            tableName: file_metadata
+            indexName: idx_file_metadata_created_at
+            columns:
+              - column:
+                  name: created_at

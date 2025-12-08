@@ -1,21 +1,60 @@
 databaseChangeLog:
   - changeSet:
-      id: create-roles
-      author: system
+      id: enable-pgcrypto-extension
+      author: yaser
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - extensionExists:
+                extensionName: pgcrypto
+      changes:
+        - sql:
+            sql: CREATE EXTENSION IF NOT EXISTS pgcrypto
+  - changeSet:
+      id: create-roles-table
+      author: yaser
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: roles
       changes:
         - createTable:
             tableName: roles
             columns:
               - column:
                   name: id
-                  type: bigint
-                  autoIncrement: true
+                  type: UUID
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
                   name: name
-                  type: varchar(50)
+                  type: VARCHAR(50)
                   constraints:
                     nullable: false
-                    unique: true
+
+        - addUniqueConstraint:
+            constraintName: uk_roles_name
+            tableName: roles
+            columnNames: name
+            validate: true
+
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  valueComputed: gen_random_uuid()
+              - column:
+                  name: name
+                  value: ROLE_USER
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  valueComputed: gen_random_uuid()
+              - column:
+                  name: name
+                  value: ROLE_ADMIN

@@ -1,13 +1,12 @@
+# db.changelog-master.yaml
 databaseChangeLog:
   - include:
-      file: db/changelog/create-users-tables.yaml
+      file: db/changelog/v1.0/enable-pgcrypto.yaml
   - include:
-      file: db/changelog/create-roles-tables.yaml
+      file: db/changelog/v1.0/create-roles-table.yaml
   - include:
-      file: db/changelog/create-file_metadata-tables.yaml
-#  - include:
-#      file: db/changelog/create-cards-tables.yaml
-#  - include:
-#      file: db/changelog/create-transfers-tables.yaml
-#  - include:
-#      file: db/changelog/seed-roles-users.yaml
+      file: db/changelog/v1.0/create-users-table.yaml
+  - include:
+      file: db/changelog/v1.0/create-user_roles-table.yaml
+  - include:
+      file: db/changelog/v1.0/create-file_metadata-table.yaml
