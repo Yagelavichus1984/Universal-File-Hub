@@ -1,16 +1,5 @@
 databaseChangeLog:
   - changeSet:
-      id: enable-pgcrypto-extension
-      author: yaser
-      preConditions:
-        - onFail: MARK_RAN
-        - not:
-            - extensionExists:
-                extensionName: pgcrypto
-      changes:
-        - sql:
-            sql: CREATE EXTENSION IF NOT EXISTS pgcrypto
-  - changeSet:
       id: create-roles-table
       author: yaser
       preConditions:
