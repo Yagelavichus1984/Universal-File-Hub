@@ -4,9 +4,9 @@ databaseChangeLog:
       author: yaser
       preConditions:
         - onFail: MARK_RAN
-        - not:
-            - extensionExists:
-                extensionName: pgcrypto
+        - sqlCheck:
+            expectedResult: 0
+            sql: "SELECT COUNT(*) FROM pg_extension WHERE extname = 'pgcrypto'"
       changes:
         - sql:
             sql: CREATE EXTENSION IF NOT EXISTS pgcrypto
