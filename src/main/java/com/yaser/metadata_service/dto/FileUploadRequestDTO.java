@@ -3,14 +3,11 @@ package com.yaser.metadata_service.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 public class FileUploadRequestDTO {
 
     @NotBlank(message = "Имя файла обязательно")
@@ -25,4 +22,38 @@ public class FileUploadRequestDTO {
 
     @NotNull(message = "Владелец файла обязателен")
     private UUID ownerId;
+
+    // Ручные геттеры если @Data не работает:
+    public String getFileName() {
+        return this.fileName;
+    }
+
+    public String getContentType() {
+        return this.contentType;
+    }
+
+    public Long getSize() {
+        return this.size;
+    }
+
+    public UUID getOwnerId() {
+        return this.ownerId;
+    }
+
+    // Сеттеры:
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public void setSize(Long size) {
+        this.size = size;
+    }
+
+    public void setOwnerId(UUID ownerId) {
+        this.ownerId = ownerId;
+    }
 }

@@ -14,48 +14,57 @@ import java.util.UUID;
 
 public interface FileMetadataRepository extends JpaRepository<FileMetadata, UUID> {
 
-    // Поиск по имени файла (если нужен по бизнес-правилам)
+    // === 1. Методы поиска ===
+
     Optional<FileMetadata> findByFileName(String fileName);
 
-    // Поиск по владельцу (User entity вместо ownerId)
+    // Поиск по владельцу (User entity)
     List<FileMetadata> findByOwner(User owner);
 
     // Поиск по статусу
     List<FileMetadata> findByStatus(Status status);
 
-    // Поиск по статусу и времени создания (для устаревших файлов)
     List<FileMetadata> findByStatusAndCreatedAtBefore(Status status, OffsetDateTime threshold);
 
-    // Поиск по storage key (уникальному ключу)
     Optional<FileMetadata> findByStorageKey(String storageKey);
 
-    // Проверка существования storage key для другого файла
     boolean existsByStorageKeyAndIdNot(String storageKey, UUID fileId);
 
-    // Нативный запрос для поиска по ownerId (если нужна обратная совместимость)
-    @Query("SELECT f FROM FileMetadata f WHERE f.owner.id = :ownerId")
-    List<FileMetadata> findByOwnerId(@Param("ownerId") UUID ownerId);
-
-    // Поиск файлов по типу контента
     List<FileMetadata> findByContentType(String contentType);
 
-    // Поиск файлов по размеру (больше указанного)
     List<FileMetadata> findBySizeGreaterThan(Long size);
 
-    // Поиск файлов по диапазону дат создания
     List<FileMetadata> findByCreatedAtBetween(OffsetDateTime start, OffsetDateTime end);
 
-    // Поиск файлов определенного владельца со статусом
     List<FileMetadata> findByOwnerAndStatus(User owner, Status status);
 
-    // Подсчет файлов по владельцу
+    // === 2. Методы подсчета ===
+
+    // Подсчет файлов по владельцу (User entity)
     long countByOwner(User owner);
 
     // Подсчет файлов по статусу
     long countByStatus(Status status);
 
-    // Удаление файлов по владельцу
+    // === 3. Методы удаления ===
+
     void deleteByOwner(User owner);
 
-    long countByOwnerId(UUID ownerId);
+    // === 4. Кастомные запросы через @Query ===
+
+    // Поиск файлов по ID владельца (через @Query)
+    @Query("SELECT f FROM FileMetadata f WHERE f.owner.id = :ownerId")
+    List<FileMetadata> findByOwnerId(@Param("ownerId") UUID ownerId);
+
+    // Подсчет файлов по ID владельца (через @Query)
+    @Query("SELECT COUNT(f) FROM FileMetadata f WHERE f.owner.id = :ownerId")
+    long countByOwnerId(@Param("ownerId") UUID ownerId);
+
+    // Подсчет файлов по статусу (альтернатива naming convention)
+    @Query("SELECT COUNT(f) FROM FileMetadata f WHERE f.status = :status")
+    long countByStatusQuery(@Param("status") Status status);
+
+    // Поиск файлов по ID владельца и статусу
+    @Query("SELECT f FROM FileMetadata f WHERE f.owner.id = :ownerId AND f.status = :status")
+    List<FileMetadata> findByOwnerIdAndStatus(@Param("ownerId") UUID ownerId, @Param("status") Status status);
 }

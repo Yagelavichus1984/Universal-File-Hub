@@ -4,11 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
+import lombok.*;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,10 +12,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Getter  // ← Создает геттеры для всех полей
+@Setter  // ← Создает сеттеры для всех полей
 @Entity
 @Table(name = "users")
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString(exclude = {"files", "roles", "passwordHash"})
 @EqualsAndHashCode(exclude = {"files", "roles"})
 public class User {
@@ -71,5 +69,100 @@ public class User {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = OffsetDateTime.now();
+    }
+
+    // === РУЧНЫЕ ГЕТТЕРЫ (если Lombok не работает) ===
+
+    public UUID getId() {
+        return this.id;
+    }
+
+    public String getUsername() {
+        return this.username;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public String getPasswordHash() {
+        return this.passwordHash;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public OffsetDateTime getUpdatedAt() {
+        return this.updatedAt;
+    }
+
+    public Long getVersion() {
+        return this.version;
+    }
+
+    public List<FileMetadata> getFiles() {
+        return this.files;
+    }
+
+    public Set<Role> getRoles() {  // ← ВОТ ЭТОТ МЕТОД НУЖЕН!
+        return this.roles;
+    }
+
+    // === РУЧНЫЕ СЕТТЕРЫ ===
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
+    public void setFiles(List<FileMetadata> files) {
+        this.files = files;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    // === ДОПОЛНИТЕЛЬНЫЕ МЕТОДЫ ===
+    public User() {
+    }
+
+    public User(UUID id) {
+        this.id = id;
+    }
+
+    public boolean hasRole(String roleName) {
+        if (roles == null) return false;
+        return roles.stream()
+                .anyMatch(role -> role != null && roleName.equals(role.getName()));
+    }
+
+    public boolean isActive() {
+        // Логика проверки активности пользователя
+        return true; // Замените на реальную логику
     }
 }

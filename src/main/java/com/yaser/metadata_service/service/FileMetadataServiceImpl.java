@@ -5,6 +5,7 @@ import com.yaser.metadata_service.entity.Status;
 import com.yaser.metadata_service.repository.FileMetadataRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,11 +13,15 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class FileMetadataServiceImpl implements FileMetadataService {
 
     private final FileMetadataRepository fileMetadataRepository;
+
+    @Autowired
+    public FileMetadataServiceImpl(FileMetadataRepository fileMetadataRepository) {
+        this.fileMetadataRepository = fileMetadataRepository;
+    }
 
     @Override
     public FileMetadata createFile(String fileName, String contentType, long size, UUID ownerId) {
@@ -42,7 +47,7 @@ public class FileMetadataServiceImpl implements FileMetadataService {
         return fileMetadataRepository.save(fileMetadata);
     }
 
-    @Override
+        @Override
     @Transactional(readOnly = true)
     public FileMetadata getFileById(UUID fileId) {
         return fileMetadataRepository.findById(fileId)
