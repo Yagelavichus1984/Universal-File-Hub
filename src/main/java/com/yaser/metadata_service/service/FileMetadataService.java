@@ -1,19 +1,24 @@
 package com.yaser.metadata_service.service;
 
-import com.yaser.metadata_service.dto.FileMetadataResponseDTO;
-import com.yaser.metadata_service.dto.FileUploadRequestDTO;
+import com.yaser.metadata_service.entity.FileMetadata;
+import com.yaser.metadata_service.command.CreateFileCommand;
+import com.yaser.metadata_service.entity.Status;
+import com.yaser.metadata_service.entity.User;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.UUID;
 
 public interface FileMetadataService {
 
-    FileMetadataResponseDTO createFile(FileUploadRequestDTO requestDTO, UUID ownerId);
+    FileMetadata createFile(CreateFileCommand command, User owner);
 
-    FileMetadataResponseDTO getFileById(UUID fileId);
+    FileMetadata getFileById(UUID fileId);
 
-    List<FileMetadataResponseDTO> getFilesByOwner(UUID ownerId);
+    @Transactional(readOnly = true)
+    List<FileMetadata> getFilesByOwner(User owner);
 
-    void deleteFile(UUID fileId, UUID ownerId);
+    void deleteFile(UUID fileId);
 
-    FileMetadataResponseDTO updateFileStatus(UUID fileId, String status, UUID ownerId);
+    FileMetadata updateFileStatus(UUID fileId, Status status);
 }
