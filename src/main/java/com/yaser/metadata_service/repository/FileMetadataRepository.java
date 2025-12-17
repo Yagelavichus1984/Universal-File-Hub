@@ -56,4 +56,6 @@ public interface FileMetadataRepository extends JpaRepository<FileMetadata, UUID
 
     // Удаление файлов по владельцу
     void deleteByOwner(User owner);
+
+    long countByOwnerId(UUID ownerId);
 }
